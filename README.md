@@ -1,0 +1,1 @@
+# Store-data-in-Local-storage-and-display-it-console-and-broswer-using-JavaScript-
