@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Storage Data Manager</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: #4a00e0;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+        
+        .content {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 650px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-section, .data-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        h2 {
+            margin-bottom: 20px;
+            color: #4a00e0;
+            font-size: 22px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4a00e0;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            background: #4a00e0;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #3575fc;
+        }
+        
+        #clearBtn {
+            background: #ff4d4d;
+            margin-top: 10px;
+        }
+        
+        #clearBtn:hover {
+            background: #ff3333;
+        }
+        
+        .data-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .data-item h3 {
+            color: #4a00e0;
+            margin-bottom: 5px;
+        }
+        
+        .data-item p {
+            margin-bottom: 3px;
+        }
+        
+        .empty-message {
+            text-align: center;
+            color: #777;
+            font-style: italic;
+        }
+        
+        .console-section {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            font-family: monospace;
+            height: 200px;
+            overflow-y: auto;
+        }
+        
+        .console-section h2 {
+            color: #00ff00;
+            border-bottom: 1px solid #00ff00;
+        }
+        
+        #consoleOutput {
+            white-space: pre-wrap;
+            margin-top: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Local Storage Data Manager</h1>
+            <p class="subtitle">Store and manage your data locally</p>
+        </header>
+        
+        <div class="content">
+            <div class="form-section">
+                <h2>Add New Data</h2>
+                <form id="dataForm">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="age">Age:</label>
+                        <input type="number" id="age" min="1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="country">Country:</label>
+                        <select id="country" required>
+                            <option value="">Select a country</option>
+                            <option value="USA">United States</option>
+                            <option value="UK">United Kingdom</option>
+                            <option value="Canada">Canada</option>
+                            <option value="Australia">Australia</option>
+                            <option value="Germany">Germany</option>
+                            <option value="Japan">Japan</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit">Save to Local Storage</button>
+                    <button type="button" id="clearBtn">Clear All Data</button>
+                </form>
+            </div>
+            
+            <div class="data-section">
+                <h2>Stored Data</h2>
+                <div id="storedData">
+                    <p class="empty-message">No data stored yet</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="console-section">
+            <h2>Console Output</h2>
+            <div id="consoleOutput">// Console messages will appear here</div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Refresh the page to see your stored data persist</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('dataForm');
+            const clearBtn = document.getElementById('clearBtn');
+            const storedDataDiv = document.getElementById('storedData');
+            const consoleOutput = document.getElementById('consoleOutput');
+            
+            // Load and display stored data on page load
+            loadStoredData();
+            
+            // Form submission handler
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const age = document.getElementById('age').value;
+                const country = document.getElementById('country').value;
+                
+                // Create data object
+                const userData = {
+                    name,
+                    email,
+                    age,
+                    country,
+                    timestamp: new Date().toLocaleString()
+                };
+                
+                // Save to localStorage
+                saveToLocalStorage(userData);
+                
+                // Display in console
+                logToConsole('Data saved to localStorage:');
+                logToConsole(JSON.stringify(userData, null, 2));
+                
+                // Reload displayed data
+                loadStoredData();
+                
+                // Reset form
+                form.reset();
+            });
+            
+            // Clear all data
+            clearBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear all stored data?')) {
+                    localStorage.clear();
+                    logToConsole('All data cleared from localStorage');
+                    loadStoredData();
+                }
+            });
+            
+            // Function to save data to localStorage
+            function saveToLocalStorage(data) {
+                // Get existing data or initialize empty array
+                const existingData = JSON.parse(localStorage.getItem('userData')) || [];
+                
+                // Add new data
+                existingData.push(data);
+                
+                // Save back to localStorage
+                localStorage.setItem('userData', JSON.stringify(existingData));
+            }
+            
+            // Function to load and display stored data
+            function loadStoredData() {
+                const storedData = JSON.parse(localStorage.getItem('userData')) || [];
+                
+                if (storedData.length === 0) {
+                    storedDataDiv.innerHTML = '<p class="empty-message">No data stored yet</p>';
+                    return;
+                }
+                
+                // Clear the display
+                storedDataDiv.innerHTML = '';
+                
+                // Add each data item to the display
+                storedData.forEach((data, index) => {
+                    const dataItem = document.createElement('div');
+                    dataItem.className = 'data-item';
+                    dataItem.innerHTML = `
+                        <h3>Entry ${index + 1}</h3>
+                        <p><strong>Name:</strong> ${data.name}</p>
+                        <p><strong>Email:</strong> ${data.email}</p>
+                        <p><strong>Age:</strong> ${data.age}</p>
+                        <p><strong>Country:</strong> ${data.country}</p>
+                        <p><strong>Saved at:</strong> ${data.timestamp}</p>
+                    `;
+                    storedDataDiv.appendChild(dataItem);
+                });
+            }
+            
+            // Function to log messages to the console output div
+            function logToConsole(message) {
+                consoleOutput.textContent += message + '\n';
+                // Scroll to bottom
+                consoleOutput.scrollTop = consoleOutput.scrollHeight;
+                
+                // Also log to browser console
+                console.log(message);
+            }
+            
+            // Initial console message
+            logToConsole('// Local Storage Manager Ready');
+            logToConsole('// Submit the form to store data');
+        });
+    </script>
+</body>
+</html>
